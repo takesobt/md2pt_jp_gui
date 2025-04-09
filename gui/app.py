@@ -48,6 +48,17 @@ def main():
             messagebox.showinfo("保存完了", f"保存しました：\n{filepath}")
             status_var.set("保存完了")
 
+    def save_to_clipboard():
+        content = output_box.get("1.0", tk.END).strip()
+        if not content:
+            messagebox.showwarning("警告", "クリップボードに保存する内容がありません。")
+            return
+
+        root.clipboard_clear()
+        root.clipboard_append(content)
+        root.update_idletasks()
+        status_var.set("クリップボードに保存しました")
+
     # UI要素の配置
     top_frame = tk.Frame(root)
     top_frame.pack(pady=10)
@@ -61,6 +72,9 @@ def main():
     save_button = tk.Button(top_frame, text="変換結果を保存", command=save_output)
     save_button.pack(side=tk.LEFT, padx=5)
 
+    clipboard_button = tk.Button(top_frame, text="クリップボードに保存", command=save_to_clipboard)
+    clipboard_button.pack(side=tk.LEFT, padx=5)
+    
     input_label = tk.Label(root, text="Markdown内容")
     input_label.pack()
     input_box = scrolledtext.ScrolledText(root, wrap=tk.WORD, height=10)

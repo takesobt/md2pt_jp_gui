@@ -37,6 +37,7 @@ sudo apt install python3-tk
 ```bash
 poetry run python gui.py
 ```
+GUIでは変換するmdファイルの選択、画面への表示、ptへの変換後のテキストの画面への表示、ファイルまたはクリップボードへの保存が可能です。
 
 ## 🚀 CLIとしての使い方
 
