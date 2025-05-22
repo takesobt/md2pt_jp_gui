@@ -23,14 +23,17 @@ def main():
                 input_box.insert(tk.END, input_text)
 
     def convert_text():
-        nonlocal input_text
-        if input_text:
+        # input_text に依存せず、常に input_box の中身を読むように変更
+        raw_input = input_box.get("1.0", tk.END).strip()
+        if raw_input:
             status_var.set("変換中...")
-            root.update_idletasks()  # 表示を即座に更新
-            converted = convert_markdown_to_plaintext(input_text)
+            root.update_idletasks()
+            converted = convert_markdown_to_plaintext(raw_input)
             output_box.delete("1.0", tk.END)
             output_box.insert(tk.END, converted)
             status_var.set("変換完了！")
+        else:
+            status_var.set("入力が空です")
 
     def save_output():
         content = output_box.get("1.0", tk.END).strip()
