@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import logging
 from md2pt_jp.converter import convert_markdown_to_plaintext
-
+import tiktoken
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -44,6 +44,13 @@ def compute_output_path(input_file: Path, input_base: Path, output_base: Path) -
     relative_path = input_file.relative_to(input_base).with_suffix(".txt")
     return output_base / relative_path
 
+def calculate_token_info(text: str, model_name="gpt-4") -> tuple[int, int]:
+    try:
+        enc = tiktoken.encoding_for_model(model_name)
+    except KeyError:
+        enc = tiktoken.get_encoding("cl100k_base")  # fallback
+    tokens = enc.encode(text)
+    return len(text), len(tokens)  # (characters, tokens)
 
 def main():
     args = parse_args()
@@ -73,10 +80,13 @@ def main():
             with output_path.open("w", encoding="utf-8") as f:
                 f.write(plain_text)
 
+            char_count, token_count = calculate_token_info(plain_text)
             if args.log:
+                #logging.info(f"Converted: {md_file} → {output_path} | Characters: {char_count} / Tokens: {token_count}") 
                 logging.info(f"Converted: {md_file} → {output_path}") 
             else: 
-                print(f"Converted: {md_file} → {output_path}")
+                print(f"Converted: {md_file} → Done | Characters: {char_count} / Tokens: {token_count}")
+                #print(f"Converted: {md_file} → {output_path}")
         except Exception as e:
             logging.error(f"Failed: {md_file} → {output_path} ({e})")
             print(f"Error converting {md_file}: {e}", file=sys.stderr)
