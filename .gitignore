@@ -180,3 +180,5 @@ cython_debug/
 # テスト・変換用フォルダを無視
 /novel_md/
 /novel_txt/
+/input_folder/
+/output_folder/
