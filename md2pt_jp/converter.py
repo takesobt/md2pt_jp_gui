@@ -43,9 +43,22 @@ def convert_markdown_to_plaintext(markdown_text: str) -> str:
     # 箇条書きの変換 (- や * → ・)
     text = re.sub(r'^\s*[-*+]\s+', '・', text, flags=re.MULTILINE)
 
-    # 番号付きリスト (1. → ・)
-    text = re.sub(r'^\s*\d+\.\s+', '・', text, flags=re.MULTILINE)
+    ## # 番号付きリスト (1. → ・)
+    ## text = re.sub(r'^\s*\d+\.\s+', '・', text, flags=re.MULTILINE)
+    # 番号付きリスト (1. → ・) — ただしチェスPGN/SAN風の手順行は除外
+    def _replace_numbered_list(match: re.Match[str]) -> str:
+        full_match = match.group(0)
+        indent = match.group('indent') or ''
+        rest = match.group('rest')
 
+        # 簡易的なチェスの手表記判定（O-O, O-O-O, e4, Qf7+, exd5, Nxe5 など）
+        first_token = rest.strip().split()[0] if rest.strip() else ''
+        if re.match(r'^(?:O-O(?:-O)?|[KQRNB]?[a-h][1-8](?:=[QRNB])?[+#]?|[a-h]x?[a-h][1-8](?:=[QRNB])?[+#]?|[KQRNB][a-h]?[1-8]?x?[a-h][1-8](?:=[QRNB])?[+#]?)$', first_token):
+            return full_match
+
+        return f"{indent}・{rest}"
+
+    text = re.sub(r'^(?P<indent>\s*)(?P<num>\d+)\.\s+(?P<rest>.+)', _replace_numbered_list, text, flags=re.MULTILINE)
     # インラインコードの除去 (`text` → text)
     text = re.sub(r'`(.*?)`', r'\1', text)
 
