@@ -20,3 +20,8 @@ def test_custom_heading_clear():
     input_text = "#☆EPISODE☆第一話\n##☆☆登場人物☆☆\n###【涼子の能力】"
     expected_output = "☆EPISODE☆第一話\n☆☆登場人物☆☆\n【涼子の能力】"
     assert convert_markdown_to_plaintext(input_text) == expected_output
+
+def test_markdown_PGN_with_boldtext_to_plaintext():
+    input_text = "**9. Qf7+ Qxf7**"
+    expected_output = "9. Qf7+ Qxf7"
+    assert convert_markdown_to_plaintext(input_text) == expected_output
