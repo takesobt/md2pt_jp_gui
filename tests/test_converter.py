@@ -25,3 +25,13 @@ def test_markdown_PGN_with_boldtext_to_plaintext():
     input_text = "**9. Qf7+ Qxf7**"
     expected_output = "9. Qf7+ Qxf7"
     assert convert_markdown_to_plaintext(input_text) == expected_output
+
+def test_markdown_PGN_basic_should_keep_numbering():
+    input_text = "1. e4 e5"
+    expected_output = "1. e4 e5"
+    assert convert_markdown_to_plaintext(input_text) == expected_output
+
+def test_markdown_ordered_list_should_still_be_bullet():
+    input_text = "1. apple\n2. banana"
+    expected_output = "・apple\n・banana"
+    assert convert_markdown_to_plaintext(input_text) == expected_output
